@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 import cors from "cors"
 import {logRequestEvent} from "./middleware/logger"
 import {errorhandler} from "./middleware/errorhandler";
-import router from "./routes/router";
+import appRoutes from "./routes";
 
 const app = express()
 const port = process.env.PORT || 4000
 
-const MONGODB_URL= "mongodb+srv://appuser:U33TgJdecX0yYQrj@cluster0.gudu8y5.mongodb.net/user_management?retryWrites=true&w=majority"
+const MONGODB_URL= `mongodb+srv://${process.env.MONGODB_USER || "appuser"}:${process.env.MONGODB_PASS || "U33TgJdecX0yYQrj"}@cluster0.gudu8y5.mongodb.net/user_management?retryWrites=true&w=majority`
 
 //custom middleware logger
 app.use(logRequestEvent)
@@ -32,8 +32,10 @@ app.use(cors())
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 
-//route
-app.use(router)
+//app routes
+app.use(appRoutes)
+
+//Connected to mongodb
 const connectMongoDb = async () =>{
     try {
         await mongoose.connect(process.env.MONGODB_URL || MONGODB_URL )
@@ -42,6 +44,12 @@ const connectMongoDb = async () =>{
     }
 }
 
+//handle base route
+app.get('/', (req:Request, res:Response)=>{
+    res.send("Hello, this is express using typescript with mongoose")
+})
+
+//handle random routes which are not in app routes
 app.all('*',(req:Request, res:Response) =>{
     res.status(404)
     if(req.accepts('json')){

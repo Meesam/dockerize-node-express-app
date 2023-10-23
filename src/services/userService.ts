@@ -1,6 +1,5 @@
 import {IUsers} from "../models/IUsers";
 import UserModel from "../models/UserModel";
-import userModel from "../models/UserModel";
 
 export const createUser = async (user:IUsers)=>{
 	const {userName, name, email, password} = user;
@@ -23,7 +22,7 @@ export const createUser = async (user:IUsers)=>{
 
 export const getUsers = async() =>{
 	try {
-		return await userModel.find();
+		return await UserModel.find();
 	}catch (e:any){
 		return {
 			error:true,
@@ -34,7 +33,7 @@ export const getUsers = async() =>{
 
 export const getUserById = async(id:string) =>{
 	try {
-		return await userModel.findOne({ _id: id } );
+		return await UserModel.findOne({ _id: id } );
 	}catch (e: any) {
 		return {
 			error:true,
@@ -45,7 +44,7 @@ export const getUserById = async(id:string) =>{
 
 export const updateUser = async(user:IUsers)=>{
 	try {
-		return  userModel.findByIdAndUpdate(
+		return  UserModel.findByIdAndUpdate(
 			user._id,
 			{
 				$set: {
